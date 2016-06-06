@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Quovis</string>
     <string name="newPlaceButtonMain">New place</string>
+    <string name="title_activity_set_location">Set location</string>
 </resources>
