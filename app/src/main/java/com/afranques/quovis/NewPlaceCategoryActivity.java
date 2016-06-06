@@ -1,6 +1,8 @@
 package com.afranques.quovis;
 
+import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -21,33 +23,39 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_place_category);
 
+        //to get the parameters sent from the previous intent
+        Intent prevIntent = getIntent();
+        //consider that maybe there's no picture
+        final Bitmap bmp = (Bitmap) prevIntent.getParcelableExtra("the_picture");
+
+        //we read all values from the table Categories and add them on a list
         myDb = new DatabaseHelper(this);
-
-//        myDb.insertData("Restaurants");
-//        myDb.insertData("Supermarkets");
-
         Cursor res = myDb.getAllData();
-        if (res.getCount() == 0) {
-            Toast.makeText(getApplicationContext(),"No categories yet",Toast.LENGTH_SHORT).show();
+        while (res.moveToNext()) {
+            items.add(res.getString(1));
         }
-        else {
-            while (res.moveToNext()) {
-                items.add(res.getString(1));
-            }
-        }
+        items.add("New category");
 
+        //we set the list to its place
         ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
-
         ListView listView = (ListView) findViewById(R.id.id_new_place_category_view);
         listView.setAdapter(adapter);
 
+        //when we click to an element of the list
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                Toast.makeText(getApplicationContext(),
-                        "Click ListItem Number " + position, Toast.LENGTH_LONG)
-                        .show();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == (items.size() - 1)) {
+                    //code to add category
+                    //myDb.insertData("Restaurants");
+                    //myDb.insertData("Supermarkets");
+                } else {
+                    //save category number and picture, and go to next screen (map location)
+                    Intent intent = new Intent(NewPlaceCategoryActivity.this, SetLocationActivity.class);
+                    intent.putExtra("the_picture", bmp);
+                    intent.putExtra("category_id", position);
+                    startActivity(intent);
+                }
             }
         });
     }
