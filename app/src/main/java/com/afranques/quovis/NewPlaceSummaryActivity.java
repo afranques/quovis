@@ -55,11 +55,15 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         //save picture to internal storage and get the path
         Calendar cal = Calendar.getInstance();
         Date rightNow = cal.getTime();
-        String pic_location = saveToInternalStorage(bmp, rightNow.toString().replaceAll("[:\\s]+",""));
+        String fileName = rightNow.toString().replaceAll("[:\\s]+", "");
+        fileName += ".jpg";
+        String pic_location = saveToInternalStorage(bmp, fileName);
 
         myDb = new DatabaseHelper(this);
+        String finalPath = pic_location+"/"+fileName;
         myDb.insertPlace(placeTitle.getText().toString(), placeDescription.getText().toString(),
-                category_id, latitude, longitude, pic_location);
+                category_id, latitude, longitude, finalPath);
+        Toast.makeText(this, finalPath, Toast.LENGTH_LONG).show();
 
         //after saving the new place jump to the main activity
         Intent intent = new Intent(this, MainActivity.class);
@@ -82,7 +86,7 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         // Create imageDir
-        File mypath=new File(directory, file_name+".jpg");
+        File mypath=new File(directory, file_name);
 
         FileOutputStream fos = null;
         try {

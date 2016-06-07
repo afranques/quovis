@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         Cursor res = myDb.getAllPlaces();
         while (res.moveToNext()) {
-            items.add(res.getString(1));
+            items.add(res.getString(0)+": "+res.getString(1));
         }
 
         //we set the list to its place
@@ -41,7 +41,10 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(view.getContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(view.getContext(), ShowPlaceActivity.class);
+                intent.putExtra("category_id", position);
+                startActivity(intent);
+                //Toast.makeText(view.getContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
             }
         });
     }

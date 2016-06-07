@@ -21,18 +21,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE Categories (" +
-                "category_id INT," +
-                "category_name VARCHAR(40) NOT NULL," +
-                "PRIMARY KEY (category_id) )");
+                "category_id INTEGER primary key AUTOINCREMENT," +
+                "category_name TEXT)");
 
         db.execSQL("CREATE TABLE Places (" +
-                "place_id INT PRIMARY KEY," +
-                "place_title VARCHAR(40) NOT NULL," +
-                "place_description VARCHAR(100)," +
-                "category_id INT," +
+                "place_id INTEGER primary key AUTOINCREMENT," +
+                "place_title TEXT," +
+                "place_description TEXT," +
+                "category_id INTEGER," +
                 "latitude FLOAT(10,7)," +
                 "longitude FLOAT(10,7)," +
-                "pic_location VARCHAR(100) )");
+                "pic_location TEXT )");
     }
 
     @Override
@@ -78,6 +77,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getAllPlaces() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from Places;", null);
+        return res;
+    }
+
+    public Cursor getPlace(int position) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from Places WHERE place_id="+(position+1), null);
         return res;
     }
 }
