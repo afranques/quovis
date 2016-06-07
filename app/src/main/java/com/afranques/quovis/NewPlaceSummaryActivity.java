@@ -1,12 +1,30 @@
 package com.afranques.quovis;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Calendar;
+import java.util.Date;
+
 public class NewPlaceSummaryActivity extends AppCompatActivity {
+    DatabaseHelper myDb;
+
+    private EditText placeTitle;
+    private EditText placeDescription;
+    private Bitmap bmp;
+    private int category_id;
+    private double latitude;
+    private double longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,14 +34,65 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         //to get the parameters sent from the previous intent
         Intent prevIntent = getIntent();
         //consider that maybe there's no picture
-        final Bitmap bmp = (Bitmap) prevIntent.getParcelableExtra("the_picture");
-        final int category_id = prevIntent.getIntExtra("category_id", -1);
+        bmp = (Bitmap) prevIntent.getParcelableExtra("the_picture");
+        category_id = prevIntent.getIntExtra("category_id", -1);
         if (category_id == -1) {
             Toast.makeText(this, "Error: Category not detected", Toast.LENGTH_SHORT).show();
         }
-        final double latitude = prevIntent.getDoubleExtra("latitude", 0);
-        final double longitude = prevIntent.getDoubleExtra("longitude", 0);
+        latitude = prevIntent.getDoubleExtra("latitude", 0);
+        longitude = prevIntent.getDoubleExtra("longitude", 0);
         Toast.makeText(this, "Latitude: "+latitude+" Longitude: "+longitude, Toast.LENGTH_SHORT).show();
 
+        ImageView img = (ImageView) findViewById(R.id.thePicture);
+        img.setImageBitmap(bmp);
+    }
+
+
+    public void savePlace(View view) {
+        placeTitle = (EditText) findViewById(R.id.place_title);
+        placeDescription = (EditText) findViewById(R.id.place_description);
+
+        //save picture to internal storage and get the path
+        Calendar cal = Calendar.getInstance();
+        Date rightNow = cal.getTime();
+        String pic_location = saveToInternalStorage(bmp, rightNow.toString().replaceAll("[:\\s]+",""));
+
+        myDb = new DatabaseHelper(this);
+        myDb.insertPlace(placeTitle.getText().toString(), placeDescription.getText().toString(),
+                category_id, latitude, longitude, pic_location);
+
+        //after saving the new place jump to the main activity
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+    }
+
+    public void discardPlace(View view) {
+        //exit application
+    }
+
+    public void saveNExit(View view) {
+        savePlace(view);
+        //after saving leave application
+
+    }
+
+    private String saveToInternalStorage(Bitmap bitmapImage, String file_name){
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory, file_name+".jpg");
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return directory.getAbsolutePath();
     }
 }
