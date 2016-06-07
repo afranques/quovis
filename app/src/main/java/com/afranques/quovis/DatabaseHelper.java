@@ -24,6 +24,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "category_id INT," +
                 "category_name VARCHAR(40) NOT NULL," +
                 "PRIMARY KEY (category_id) )");
+
+        db.execSQL("CREATE TABLE Places (" +
+                "place_id INT PRIMARY KEY," +
+                "place_title VARCHAR(40) NOT NULL," +
+                "place_description VARCHAR(100)," +
+                "category_id INT," +
+                "latitude FLOAT(10,7)," +
+                "longitude FLOAT(10,7)," +
+                "pic_location VARCHAR(100) )");
     }
 
     @Override
@@ -43,9 +52,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
     }
 
+    public boolean insertPlace(String place_title, String place_description, int category_id,
+                               double latitude, double longitude, String pic_location) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("place_title", place_title);
+        contentValues.put("place_description", place_description);
+        contentValues.put("category_id", category_id);
+        contentValues.put("latitude", latitude);
+        contentValues.put("longitude", longitude);
+        contentValues.put("pic_location", pic_location);
+        long result = db.insert("Places", null, contentValues);
+        if(result == -1)
+            return false;
+        else
+            return true;
+    }
+
     public Cursor getAllData() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from Categories;", null);
+        return res;
+    }
+
+    public Cursor getAllPlaces() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from Places;", null);
         return res;
     }
 }
