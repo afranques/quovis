@@ -26,14 +26,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //to reset database
-        //this.deleteDatabase("QuovisDB.db");
-
         myDb = new DatabaseHelper(this);
+        // TODO I never close the database, and I should do that because otherwise i get this:
+        // A SQLiteConnection object for database '/data/data/com.afranques.quovis/databases/QuovisDB.db'
+        // was leaked! Please fix your application to end transactions in progress properly and to
+        // close the database when it is no longer needed.
+
         Cursor res = myDb.getAllPlaces();
         while (res.moveToNext()) {
             itemsID.add(res.getInt(0)); //to get the place_id
-            items.add(res.getInt(0)+": "+res.getString(1));
+            items.add(res.getString(1));
         }
 
         //we set the list to its place
@@ -45,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(view.getContext(), ShowPlaceActivity.class);
-                intent.putExtra("category_id", position);
+                Intent intent = new Intent(view.getContext(), ShowPlaceInMapsActivity.class);
+                intent.putExtra("place_id", itemsID.get(position));
                 startActivity(intent);
                 //Toast.makeText(view.getContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
             }
@@ -87,5 +89,27 @@ public class MainActivity extends AppCompatActivity {
     public void startNewPlace(View view) {
         Intent intent = new Intent(this, TakePicActivity.class);
         startActivity(intent);
+    }
+
+    public void deleteMyDatabase(final View view) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+        alert.setTitle("Delete all data");
+        alert.setMessage("Are you sure you want to erase all stored data? This action is irreversible.");
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //to reset database and reload Main Activity
+                view.getContext().deleteDatabase("QuovisDB.db");
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // what ever you want to do with No option.
+                dialog.cancel();
+            }
+        });
+        alert.show();
     }
 }

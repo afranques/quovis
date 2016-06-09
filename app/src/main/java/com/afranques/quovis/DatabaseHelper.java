@@ -29,8 +29,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "place_title TEXT," +
                 "place_description TEXT," +
                 "category_id INTEGER," +
-                "latitude FLOAT(10,7)," +
-                "longitude FLOAT(10,7)," +
+                "latitude TEXT," +
+                "longitude TEXT," +
                 "pic_location TEXT )");
     }
 
@@ -76,8 +76,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("place_title", place_title);
         contentValues.put("place_description", place_description);
         contentValues.put("category_id", category_id);
-        contentValues.put("latitude", latitude);
-        contentValues.put("longitude", longitude);
+        contentValues.put("latitude", Double.toString(latitude));
+        contentValues.put("longitude", Double.toString(longitude));
         contentValues.put("pic_location", pic_location);
         long result = db.insert("Places", null, contentValues);
         if(result == -1)
@@ -100,7 +100,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public Cursor getPlace(int position) {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from Places WHERE place_id="+(position+1), null);
+        Cursor res = db.rawQuery("select * from Places WHERE place_id="+position, null);
         return res;
     }
 }

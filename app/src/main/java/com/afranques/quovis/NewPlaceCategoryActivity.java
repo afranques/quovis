@@ -39,7 +39,7 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         Cursor res = myDb.getAllData();
         while (res.moveToNext()) {
             itemsID.add(res.getInt(0)); //to get the category_id
-            items.add(res.getInt(0)+": "+res.getString(1)); //to get the category_name
+            items.add(res.getString(1)); //to get the category_name
         }
 
         //we set the list to its place

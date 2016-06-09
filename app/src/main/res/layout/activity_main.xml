@@ -15,12 +15,21 @@
         android:layout_height="wrap_content"
         android:text="@string/newPlaceButtonMain"
         android:onClick="startNewPlace"
-        android:id="@+id/button"
+        android:id="@+id/button_new_place_id"
         android:layout_gravity="top|center" />
 
     <ListView
         android:id="@+id/list_places_id"
         android:layout_width="match_parent"
         android:longClickable="true"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/deleteDatabase"
+        android:onClick="deleteMyDatabase"
+        android:id="@+id/delete_database_id"
+        android:layout_gravity="bottom|center" />
 </LinearLayout>

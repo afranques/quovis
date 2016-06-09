@@ -25,7 +25,7 @@ public class ShowPlaceActivity extends AppCompatActivity {
 
         //to get the parameters sent from the previous intent
         Intent prevIntent = getIntent();
-        int category_id = prevIntent.getIntExtra("category_id", -1);
+        int category_id = prevIntent.getIntExtra("place_id", -1);
 
         myDb = new DatabaseHelper(this);
         Cursor res = myDb.getPlace(category_id);
