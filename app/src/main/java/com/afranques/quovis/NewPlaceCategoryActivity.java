@@ -39,7 +39,7 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         Cursor res = myDb.getAllData();
         while (res.moveToNext()) {
             itemsID.add(res.getInt(0)); //to get the category_id
-            items.add(res.getString(0)+": "+res.getString(1)); //to get the category_name
+            items.add(res.getInt(0)+": "+res.getString(1)); //to get the category_name
         }
 
         //we set the list to its place
@@ -63,33 +63,60 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, final View view, final int pos, long id) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
-                //alert.setMessage("Delete category");
-                alert.setTitle("Delete category");
-                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        //Toast.makeText(view.getContext(), "cat " + itemsID.get(pos)+" deleted", Toast.LENGTH_SHORT).show();
-
-                        //we delete that category_id (entry) from Categories
-                        myDb.deleteCategory(itemsID.get(pos));
-
-                        //we reload the activity in order to load the new category
-                        Intent intent = getIntent();
-                        finish();
-                        startActivity(intent);
+                //code to show listview of either rename category or delete it
+                final CharSequence[] items = {"Rename category", "Delete category"};
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                //builder.setTitle("Make your selection");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int item) {
+                        if (item == 0) {
+                            renameCategory(view, pos);
+                        } else {
+                            deleteCategory(view, pos);
+                        }
                     }
                 });
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         // what ever you want to do with No option.
                         dialog.cancel();
                     }
                 });
+                AlertDialog alert = builder.create();
                 alert.show();
 
                 return true;
             }
         });
+    }
+
+    public void deleteCategory(View view, final int pos) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+        alert.setTitle("Delete category");
+        alert.setMessage("Category name: "+items.get(pos));
+        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //Toast.makeText(view.getContext(), "cat " + itemsID.get(pos)+" deleted", Toast.LENGTH_SHORT).show();
+
+                //we delete that category_id (entry) from Categories
+                // TODO we have to check if there's some place associated to this category_id
+                // and if there is we have to ask if the user wants to delete those entries too
+                // which will be ON DELETE CASCADE in the database (in the table Categories i think)
+                myDb.deleteCategory(itemsID.get(pos));
+
+                //we reload the activity in order to load the new category
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        });
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // what ever you want to do with No option.
+                dialog.cancel();
+            }
+        });
+        alert.show();
     }
 
     public void addCategory(View view) {
@@ -109,6 +136,42 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
 
                 //we insert the new category into de DB
                 myDb.insertData(newCategoryName);
+
+                //we reload the activity in order to load the new category
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // what ever you want to do with No option.
+                dialog.cancel();
+            }
+        });
+
+        alert.show();
+    }
+
+    public void renameCategory(View view, final int pos) {
+        //code to add category
+        AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+        final EditText edittext = new EditText(view.getContext());
+        edittext.setText(items.get(pos));
+        alert.setTitle("Rename category");
+        //alert.setMessage("Modify the category name");
+
+        alert.setView(edittext);
+
+        alert.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //What ever you want to do with the value
+                String newCategoryName = edittext.getText().toString();
+                //Toast.makeText(view.getContext(), newCategoryName, Toast.LENGTH_SHORT).show();
+
+                //we insert the new category into de DB
+                myDb.updateCategory(itemsID.get(pos), newCategoryName);
 
                 //we reload the activity in order to load the new category
                 Intent intent = getIntent();

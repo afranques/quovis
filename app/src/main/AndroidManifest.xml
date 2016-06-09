@@ -40,7 +40,10 @@
             android:name=".SetLocationActivity"
             android:label="@string/title_activity_set_location" />
         <activity android:name=".NewPlaceSummaryActivity" />
-        <activity android:name=".ShowPlaceActivity"></activity>
+        <activity android:name=".ShowPlaceActivity" />
+        <activity
+            android:name=".ShowPlaceInMapsActivity"
+            android:label="@string/title_activity_show_place_in_maps"></activity>
     </application>
 
 </manifest>

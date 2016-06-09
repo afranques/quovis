@@ -60,6 +60,8 @@ public class ShowPlaceActivity extends AppCompatActivity {
     }
 
     public void goToMain(View view) {
-        //
+        //just go back to Main activity
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
