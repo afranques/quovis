@@ -56,6 +56,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.delete("Categories", "category_id = "+cat_id, null);
     }
 
+    public boolean updateCategory(int cat_id, String new_name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("category_name", new_name);
+        db.update("Categories", contentValues, "category_id = " + cat_id, null);
+        return true;
+    }
+
+    public Integer deletePlace(int place_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete("Places", "place_id = "+place_id, null);
+    }
+
     public boolean insertPlace(String place_title, String place_description, int category_id,
                                double latitude, double longitude, String pic_location) {
         SQLiteDatabase db = this.getWritableDatabase();
