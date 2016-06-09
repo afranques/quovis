@@ -51,6 +51,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return true;
     }
 
+    public Integer deleteCategory(int cat_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete("Categories", "category_id = "+cat_id, null);
+    }
+
     public boolean insertPlace(String place_title, String place_description, int category_id,
                                double latitude, double longitude, String pic_location) {
         SQLiteDatabase db = this.getWritableDatabase();
