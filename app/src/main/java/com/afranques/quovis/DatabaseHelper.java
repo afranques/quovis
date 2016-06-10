@@ -98,6 +98,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getPlacesByCat(int position) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res;
+        if (position != 0) { //if category_id selected is other than all
+            res = db.rawQuery("select * from Places where category_id=" + position +";", null);
+        } else {
+            res = db.rawQuery("select * from Places;", null);
+        }
+        return res;
+    }
+
     public Cursor getPlace(int position) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from Places WHERE place_id="+position, null);
