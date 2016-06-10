@@ -17,7 +17,6 @@ public class ShowPlaceActivity extends AppCompatActivity {
 
     DatabaseHelper myDb;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,10 +38,12 @@ public class ShowPlaceActivity extends AppCompatActivity {
             placeDescription.setText(res.getString(2));
 
             TextView placeCategory = (TextView) findViewById(R.id.show_place_category);
-            placeCategory.setText(res.getString(3));
+            Cursor catRes = myDb.getCatName(res.getInt(3));
+            catRes.moveToNext();
+            placeCategory.setText(catRes.getString(0));
 
-            TextView placeLatLong = (TextView) findViewById(R.id.show_place_latlong);
-            placeLatLong.setText("Lat: " + res.getString(4) + " Long: " + res.getString(5));
+//            TextView placeLatLong = (TextView) findViewById(R.id.show_place_latlong);
+//            placeLatLong.setText("Lat: " + res.getString(4) + " Long: " + res.getString(5));
 
             ImageView img = (ImageView) findViewById(R.id.show_thePicture);
             String pic_location = res.getString(6);

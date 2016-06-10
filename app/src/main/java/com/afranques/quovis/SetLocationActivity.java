@@ -67,9 +67,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         Button button = new Button(this);
         button.setText("Save location");
         addContentView(button, new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT, AbsListView.LayoutParams.WRAP_CONTENT));
-
         button.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
@@ -162,7 +160,13 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
 
     @Override
     public void onLocationChanged(Location location) {
-
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        Toast.makeText(this, "New location", Toast.LENGTH_SHORT).show();
+        CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+        mMap.moveCamera(center);
+        mMap.animateCamera(zoom);
     }
 
     @Override

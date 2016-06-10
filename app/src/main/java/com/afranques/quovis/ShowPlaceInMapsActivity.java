@@ -19,9 +19,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class ShowPlaceInMapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
 
     private GoogleMap mMap;
     DatabaseHelper myDb;
@@ -84,12 +85,25 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements OnMapRe
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             Bitmap bitmap = BitmapFactory.decodeFile(pic_location, options);
 
+            Cursor catRes = myDb.getCatName(res.getInt(3));
+            catRes.moveToNext();
+
             mMap.addMarker(new MarkerOptions()
                     .position(placeLocation)
                     .title(res.getString(1))
-                    .snippet(res.getString(2))
-                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+                    //.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                    .snippet(catRes.getString(0)+" - "+res.getString(2))).showInfoWindow();
+            mMap.setOnInfoWindowClickListener(this);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 16));
+
         }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        //Toast.makeText(this, "Info window clicked",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ShowPlaceActivity.class);
+        intent.putExtra("place_id", place_id);
+        startActivity(intent);
     }
 }
