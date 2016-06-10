@@ -22,7 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TakePicActivity" />
         <activity android:name=".NewPlaceCategoryActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

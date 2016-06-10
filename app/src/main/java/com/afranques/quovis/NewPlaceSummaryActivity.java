@@ -41,7 +41,7 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         }
         latitude = prevIntent.getDoubleExtra("latitude", 0);
         longitude = prevIntent.getDoubleExtra("longitude", 0);
-        Toast.makeText(this, "Latitude: "+latitude+" Longitude: "+longitude, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Latitude: "+latitude+" Longitude: "+longitude, Toast.LENGTH_SHORT).show();
 
         ImageView img = (ImageView) findViewById(R.id.thePicture);
         img.setImageBitmap(bmp);
@@ -63,7 +63,7 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         String finalPath = pic_location+"/"+fileName;
         myDb.insertPlace(placeTitle.getText().toString(), placeDescription.getText().toString(),
                 category_id, latitude, longitude, finalPath);
-        Toast.makeText(this, finalPath, Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, finalPath, Toast.LENGTH_LONG).show();
 
         //after saving the new place jump to the main activity
         Intent intent = new Intent(this, MainActivity.class);

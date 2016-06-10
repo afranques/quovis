@@ -4,8 +4,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,11 +26,49 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDb;
     List<String> items = new ArrayList<String>();
     List<Integer> itemsID = new ArrayList<Integer>();
+    private static final int REQ_CODE_TAKE_PICTURE = 1;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.topcorner_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete_database_id:
+                // User chose the "Erase all data" item, delete all database...
+                deleteMyDatabase(findViewById(android.R.id.content));
+                return true;
+
+            case R.id.add_place_id:
+                // User chose the "Add new place"
+                startNewPlace();
+                return true;
+//
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FloatingActionButton fab_add_button = (FloatingActionButton) findViewById(R.id.fab_add_button_main);
+        fab_add_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Click "add place" action
+                startNewPlace();
+            }
+        });
 
         myDb = new DatabaseHelper(this);
         // TODO I never close the database, and I should do that because otherwise i get this:
@@ -86,8 +130,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void startNewPlace(View view) {
-        Intent intent = new Intent(this, TakePicActivity.class);
+    public void startNewPlace() {
+        //this function invokes the camera
+        takePicture();
+    }
+
+    //this the function that defines how to invoke the camera
+    private void takePicture() {
+        Intent picIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(picIntent, REQ_CODE_TAKE_PICTURE);
+    }
+
+    //here we say what to do when the camera returns the picture
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent theIntent) {
+
+        //here we call the next activity, passing as a parameter the picture
+        Intent intent = new Intent(this, NewPlaceCategoryActivity.class);
+        if (requestCode == REQ_CODE_TAKE_PICTURE && resultCode == RESULT_OK) {
+            Bitmap bmp = (Bitmap) theIntent.getExtras().get("data");
+            //ImageView img = (ImageView) findViewById(R.id.thePicture);
+            //img.setImageBitmap(bmp);
+
+            //MAYBE YOU SHOULD CONSIDER COMPRESSING THE IMAGE. CHECK STACKOVERFLOW QUESTION IN FAVS
+            intent.putExtra("the_picture", bmp);
+        }
         startActivity(intent);
     }
 
