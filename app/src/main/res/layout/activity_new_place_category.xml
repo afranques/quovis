@@ -17,10 +17,12 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/newCategoryButton"
         android:onClick="addCategory"
+        android:background="#FF0000"
+        android:textColor="#FFFFFF"
         android:id="@+id/add_category_button_id"
         android:layout_gravity="bottom|center" />
 

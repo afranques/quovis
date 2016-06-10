@@ -65,7 +65,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Button button = new Button(this);
-        button.setText("Click me");
+        button.setText("Save location");
         addContentView(button, new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT, AbsListView.LayoutParams.WRAP_CONTENT));
 
         button.setOnClickListener(new View.OnClickListener() {

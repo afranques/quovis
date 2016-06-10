@@ -46,7 +46,7 @@ public class ShowPlaceActivity extends AppCompatActivity {
 
             ImageView img = (ImageView) findViewById(R.id.show_thePicture);
             String pic_location = res.getString(6);
-            Toast.makeText(this, pic_location, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, pic_location, Toast.LENGTH_SHORT).show();
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
