@@ -28,14 +28,14 @@
         android:text="Category"
         android:id="@+id/show_place_category" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Lat and Long"
-        android:id="@+id/show_place_latlong" />
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Lat and Long"-->
+        <!--android:id="@+id/show_place_latlong" />-->
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/show_thePicture"
         android:contentDescription="New place picture"

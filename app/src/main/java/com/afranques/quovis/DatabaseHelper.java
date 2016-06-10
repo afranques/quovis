@@ -92,6 +92,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
     }
 
+    public Cursor getCatName(int category_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select category_name from Categories where category_id="+category_id+";", null);
+        return res;
+    }
+
     public Cursor getAllPlaces() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from Places;", null);
