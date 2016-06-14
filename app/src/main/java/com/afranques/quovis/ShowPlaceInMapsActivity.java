@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
 
+    private static final int REQUEST_LOCATION_PERMISSION_CODE = 2;
     private GoogleMap mMap;
     DatabaseHelper myDb;
     private int place_id;
@@ -56,17 +57,8 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
+        enableMyLocation();
+
         LatLng placeLocation;
         myDb = new DatabaseHelper(this);
         Cursor res = myDb.getPlace(place_id);
@@ -87,15 +79,28 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
 
             Cursor catRes = myDb.getCatName(res.getInt(3));
             catRes.moveToNext();
+            if (mMap != null) {
+                mMap.addMarker(new MarkerOptions()
+                        .position(placeLocation)
+                        .title(res.getString(1))
+                        //.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
+                        .snippet(catRes.getString(0) + " - " + res.getString(2))).showInfoWindow();
+                mMap.setOnInfoWindowClickListener(this);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 16));
+            } else {
+                Toast.makeText(this, "Map is null and couldn't place the marker", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
-            mMap.addMarker(new MarkerOptions()
-                    .position(placeLocation)
-                    .title(res.getString(1))
-                    //.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                    .snippet(catRes.getString(0)+" - "+res.getString(2))).showInfoWindow();
-            mMap.setOnInfoWindowClickListener(this);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 16));
-
+    private void enableMyLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // If we don't have access yet, request it
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION_CODE);
+        } else if (mMap != null) {
+            // If we already have access, prepare maps
+            mMap.setMyLocationEnabled(true);
+            //mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
     }
 
@@ -105,5 +110,35 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
         Intent intent = new Intent(this, ShowPlaceActivity.class);
         intent.putExtra("place_id", place_id);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_LOCATION_PERMISSION_CODE: {
+                if (grantResults.length > 0) {
+                    // If request is cancelled, the result arrays are empty.
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        // permission was granted, yay! Do the
+                        // contacts-related task you need to do.
+                        enableMyLocation();
+                    } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        Toast.makeText(this, "We need location to get your place", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
+                        // Show an expanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+                    } else {
+                        Toast.makeText(this, "The app is not gonna work without location permitions, so go to settings and allow it", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                    //return;
+                }
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 }

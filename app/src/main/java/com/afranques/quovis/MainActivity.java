@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Array of choices for the spinner
         //we read all values from the table Categories and add them on a list
@@ -111,9 +111,10 @@ public class MainActivity extends AppCompatActivity {
         }
         //verticalMarginInPixels is the value from @dimen/activity_vertical_margin
         int verticalMarginInPixels = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
+        int horizontalMarginInPixels = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
         //so the padding of the content_main_id layout is the taskbar height + the vertical margin
         LinearLayout ln = (LinearLayout) this.findViewById(R.id.content_main_id);
-        ln.setPadding(0,verticalMarginInPixels + actionBarHeight,0,0);
+        ln.setPadding(horizontalMarginInPixels,verticalMarginInPixels + actionBarHeight,horizontalMarginInPixels,verticalMarginInPixels);
 
         FloatingActionButton fab_add_button = (FloatingActionButton) findViewById(R.id.fab_add_button_main);
         fab_add_button.setOnClickListener(new View.OnClickListener() {
