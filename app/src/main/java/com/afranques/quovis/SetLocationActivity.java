@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class SetLocationActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
+    private static final int REQUEST_LOCATION_PERMISSION_CODE = 2;
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
     private LocationManager locationManager;
@@ -181,12 +182,50 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION_PERMISSION_CODE);
+            // REQUEST_LOCATION_PERMISSION_CODE is an
+            // app-defined int constant. The callback method gets the
+            // result of the request.
+
+        } else {
+            mMap.setMyLocationEnabled(true);
+            // Add a marker in Sydney and move the camera and zoom in to size 13
+            //LatLng sydney = new LatLng(-34, 151);
+            //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").snippet("The most populous city in Australia"));
+            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
         }
-        mMap.setMyLocationEnabled(true);
-        // Add a marker in Sydney and move the camera and zoom in to size 13
-        //LatLng sydney = new LatLng(-34, 151);
-        //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").snippet("The most populous city in Australia"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_LOCATION_PERMISSION_CODE: {
+                if (grantResults.length > 0) {
+                    // If request is cancelled, the result arrays are empty.
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        // permission was granted, yay! Do the
+                        // contacts-related task you need to do.
+                        mMap.setMyLocationEnabled(true);
+                    } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        Toast.makeText(this, "We need location to get your place", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
+                        // Show an expanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+                    } else {
+                        Toast.makeText(this, "The app is not gonna work without location permitions, so go to settings and allow it", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                    //return;
+                }
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 }
