@@ -17,6 +17,7 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
@@ -68,22 +69,41 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
                 .build();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        Button button = new Button(this);
-        button.setText("Save location");
-        addContentView(button, new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT, AbsListView.LayoutParams.WRAP_CONTENT));
-        button.setOnClickListener(new View.OnClickListener() {
+        // https://github.com/dmytrodanylyk/android-process-button/wiki/User-Guide
+        ActionProcessButton btnProcess = (ActionProcessButton) findViewById(R.id.btnProcess);
+        btnProcess.setMode(ActionProcessButton.Mode.ENDLESS);
+        btnProcess.setProgress(1);
+        btnProcess.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                stopLocationUpdates(); //we stop updating maps
-                Intent intent = new Intent(v.getContext(), NewPlaceSummaryActivity.class);
-                intent.putExtra("the_picture", bmp);
-                intent.putExtra("category_id", category_id);
-                intent.putExtra("latitude", latitude);
-                intent.putExtra("longitude", longitude);
-                startActivity(intent);
+            public void onClick(View view) {
+                ActionProcessButton btn = (ActionProcessButton) view;
+                if(btn.getProgress() == 100){
+                    Intent intent = new Intent(view.getContext(), NewPlaceSummaryActivity.class);
+                    intent.putExtra("the_picture", bmp);
+                    intent.putExtra("category_id", category_id);
+                    intent.putExtra("latitude", latitude);
+                    intent.putExtra("longitude", longitude);
+                    startActivity(intent);
+                }
             }
         });
+
+//        Button button = new Button(this);
+//        button.setText("Save location");
+//        addContentView(button, new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT, AbsListView.LayoutParams.WRAP_CONTENT));
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // TODO Auto-generated method stub
+//                stopLocationUpdates(); //we stop updating maps
+//                Intent intent = new Intent(v.getContext(), NewPlaceSummaryActivity.class);
+//                intent.putExtra("the_picture", bmp);
+//                intent.putExtra("category_id", category_id);
+//                intent.putExtra("latitude", latitude);
+//                intent.putExtra("longitude", longitude);
+//                startActivity(intent);
+//            }
+//        });
     }
 
 
@@ -97,6 +117,10 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         //if (mLocation == null) {
         startLocationUpdates();
         Toast.makeText(this, "Started location updates", Toast.LENGTH_SHORT).show();
+
+        //we put the loading button into loading position (so that it can't be clicked)
+        ActionProcessButton btnProcess = (ActionProcessButton) findViewById(R.id.btnProcess);
+        btnProcess.setProgress(1);
         //}
         if (mLocation != null) {
             latitude = mLocation.getLatitude();
@@ -176,7 +200,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location.getAccuracy() < 15 && distanceTwoLocations(mLocation, location) < 15) {
+        if (location.getAccuracy() < 20 && distanceTwoLocations(mLocation, location) < 20) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
             Toast.makeText(this, "New location", Toast.LENGTH_SHORT).show();
@@ -184,11 +208,14 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
             mMap.moveCamera(center);
             mMap.animateCamera(zoom);
-            hasLocation = true;
+            hasLocation = true; //do I really need this flag? I think I'm not using it
+            ActionProcessButton btnProcess = (ActionProcessButton) findViewById(R.id.btnProcess);
+            btnProcess.setProgress(100);
         }
     }
 
     public double distanceTwoLocations(Location loc1, Location loc2) {
+        //this is not an accurate formula, to see a better one search: Haversine formula
         double lat1 = loc1.getLatitude();
         double lat2 = loc2.getLatitude();
         double lon1 = loc1.getLongitude();
