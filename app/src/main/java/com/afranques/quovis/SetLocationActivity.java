@@ -26,6 +26,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -36,6 +37,8 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     private Location mLocation;
     private LocationManager locationManager;
     private LocationRequest mLocationRequest;
+    private boolean mRequestingLocationUpdates;
+    private boolean hasLocation = false;
 
     private GoogleMap mMap;
 
@@ -72,6 +75,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+                stopLocationUpdates(); //we stop updating maps
                 Intent intent = new Intent(v.getContext(), NewPlaceSummaryActivity.class);
                 intent.putExtra("the_picture", bmp);
                 intent.putExtra("category_id", category_id);
@@ -86,52 +90,41 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     @Override
     public void onConnected(Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+            //since we make use of maps, we've got to check if we have permission granted
+            enableMyLocation();
         }
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLocation == null) {
-            startLocationUpdates();
-        }
+        //if (mLocation == null) {
+        startLocationUpdates();
+        Toast.makeText(this, "Started location updates", Toast.LENGTH_SHORT).show();
+        //}
         if (mLocation != null) {
             latitude = mLocation.getLatitude();
             longitude = mLocation.getLongitude();
-
+            Toast.makeText(this, "Got initial coordinates", Toast.LENGTH_SHORT).show();
             CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
             mMap.moveCamera(center);
             mMap.animateCamera(zoom);
-        } else {
-            // Toast.makeText(this, "Location not Detected", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, "Location not detected", Toast.LENGTH_SHORT).show();
         }
     }
 
     protected void startLocationUpdates() {
         // Create the location request
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //since we make use of maps, we've got to check if we have permission granted
+            enableMyLocation();
+        }
+        mRequestingLocationUpdates = true;
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(1000 * 5);
-        //.setFastestInterval(1000*);
-        // Request location updates
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                mLocationRequest, this);
-        Log.d("reque", "--->>>>");
+                .setInterval(1000 * 5); //5 seconds requested interval (might be faster if some other app asks)
+                //.setFastestInterval(1000*5); this sets amount of time has to occur before updating
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        //Log.d("reque", "--->>>>");
     }
 
     @Override
@@ -160,42 +153,64 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mGoogleApiClient.isConnected() && !mRequestingLocationUpdates) {
+            startLocationUpdates();
+        }
+    }
+
+    protected void stopLocationUpdates() {
+        if (mRequestingLocationUpdates) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(
+                    mGoogleApiClient, this);
+            mRequestingLocationUpdates = false;
+        }
+    }
+
+    @Override
     public void onLocationChanged(Location location) {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-        Toast.makeText(this, "New location", Toast.LENGTH_SHORT).show();
-        CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
-        mMap.moveCamera(center);
-        mMap.animateCamera(zoom);
+        if (location.getAccuracy() < 15 && distanceTwoLocations(mLocation, location) < 15) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            Toast.makeText(this, "New location", Toast.LENGTH_SHORT).show();
+            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
+            mMap.moveCamera(center);
+            mMap.animateCamera(zoom);
+            hasLocation = true;
+        }
+    }
+
+    public double distanceTwoLocations(Location loc1, Location loc2) {
+        double lat1 = loc1.getLatitude();
+        double lat2 = loc2.getLatitude();
+        double lon1 = loc1.getLongitude();
+        double lon2 = loc2.getLongitude();
+        double theDistance = Math.sqrt(Math.pow(lat1-lat2, 2)+Math.pow(lon1-lon2, 2));
+        return theDistance;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        enableMyLocation();
+    }
 
+    private void enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION_CODE);
-            // REQUEST_LOCATION_PERMISSION_CODE is an
-            // app-defined int constant. The callback method gets the
-            // result of the request.
-
-        } else {
+            // If we don't have access yet, request it
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION_CODE);
+        } else if (mMap != null) {
+            // If we already have access, prepare maps
             mMap.setMyLocationEnabled(true);
-            // Add a marker in Sydney and move the camera and zoom in to size 13
-            //LatLng sydney = new LatLng(-34, 151);
-            //mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney").snippet("The most populous city in Australia"));
-            //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
     }
 
@@ -208,7 +223,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
                     if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                         // permission was granted, yay! Do the
                         // contacts-related task you need to do.
-                        mMap.setMyLocationEnabled(true);
+                        enableMyLocation();
                     } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                         Toast.makeText(this, "We need location to get your place", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(this, MainActivity.class);
