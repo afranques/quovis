@@ -30,7 +30,9 @@ import java.util.List;
 public class MainContentTabs extends Fragment {
 
     DatabaseHelper myDb;
-    List<String> items = new ArrayList<String>();
+    List<String> items = new ArrayList<String>(); //we store the titles
+    List<String> itemsDes = new ArrayList<String>(); //we store the descriptions
+    List<String> itemsPicLoc = new ArrayList<String>(); //we store the pic locations
     List<Integer> itemsID = new ArrayList<Integer>();
     private int category_id;
 
@@ -59,13 +61,22 @@ public class MainContentTabs extends Fragment {
         itemsID = new ArrayList<Integer>();
         myDb = new DatabaseHelper(this.getContext());
         Cursor res = myDb.getPlacesByCat(position);
+        ArrayList<ArrayList<String>> listOfLists = new ArrayList<ArrayList<String>>();
+        ArrayList<String> rowInfo = new ArrayList<String>();
         while (res.moveToNext()) {
+            rowInfo = new ArrayList<String>();
             itemsID.add(res.getInt(0)); //to get the place_id
-            items.add(res.getString(1));
+            items.add(res.getString(1)); //to get the place_title
+            rowInfo.add(res.getString(1));
+            itemsDes.add(res.getString(2)); //to get the place_description
+            rowInfo.add(res.getString(2));
+            itemsPicLoc.add(res.getString(6)); //to get the place_pic_location
+            rowInfo.add(res.getString(6));
+            listOfLists.add(rowInfo);
         }
 
         //we set the list to its place
-        ArrayAdapter adapter = new ArrayAdapter<String>(view.getContext(), android.R.layout.simple_list_item_1, items);
+        MainListRowsAdapter adapter = new MainListRowsAdapter(view.getContext(), listOfLists);
         ListView listView = (ListView) view.findViewById(R.id.list_places_id);
         listView.setAdapter(adapter);
 

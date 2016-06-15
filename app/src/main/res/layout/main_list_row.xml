@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?attr/selectableItemBackground"
+    android:id="@+id/main_list_row_id"
+    tools:context="com.afranques.quovis.MainContentTabs"
+    android:padding="8dp">
+
+    <!-- Thumbnail Image -->
+    <ImageView
+        android:id="@+id/thumbnail_row"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="8dp" />
+
+    <!-- Movie Title -->
+    <TextView
+        android:id="@+id/title_row"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/thumbnail_row"
+        android:layout_toRightOf="@+id/thumbnail_row"
+        android:textStyle="bold" />
+
+    <!-- Rating -->
+    <TextView
+        android:id="@+id/rating_row"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_row"
+        android:layout_marginTop="1dip"
+        android:layout_toRightOf="@+id/thumbnail_row" />
+
+    <!-- Genre -->
+    <TextView
+        android:id="@+id/genre_row"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rating_row"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/thumbnail_row" />
+
+</RelativeLayout>
