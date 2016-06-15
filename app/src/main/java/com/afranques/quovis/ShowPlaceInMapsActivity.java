@@ -24,7 +24,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.squareup.picasso.Picasso;
 import com.wunderlist.slidinglayer.SlidingLayer;
 
 import java.io.File;
@@ -126,11 +125,10 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
         TextView placeCategory = (TextView) findViewById(R.id.show_place_category);
         placeCategory.setText(Html.fromHtml("<b>Category: </b>"+category_place));
 
-        final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Quovis/";
-        ImageView myImage = (ImageView) findViewById(R.id.show_thePicture);
         BitmapFactory.Options options = new BitmapFactory.Options();
+        ImageView myImage = (ImageView) findViewById(R.id.show_thePicture);
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(dir+pic_location_place, options);
+        Bitmap bitmap = BitmapFactory.decodeFile(pic_location_place, options);
         myImage.setImageBitmap(bitmap);
 
         //Toast.makeText(this, "Info window clicked",Toast.LENGTH_SHORT).show();

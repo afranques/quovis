@@ -15,8 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,7 +26,7 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
 
     private EditText placeTitle;
     private EditText placeDescription;
-    private String pic_location;
+    private Bitmap bmp;
     private int category_id;
     private double latitude;
     private double longitude;
@@ -41,8 +39,7 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         //to get the parameters sent from the previous intent
         Intent prevIntent = getIntent();
         //consider that maybe there's no picture
-        pic_location = (String) prevIntent.getStringExtra("the_picture");
-        Toast.makeText(this, pic_location, Toast.LENGTH_SHORT).show();
+        bmp = (Bitmap) prevIntent.getParcelableExtra("the_picture");
         category_id = prevIntent.getIntExtra("category_id", -1);
         if (category_id == -1) {
             Toast.makeText(this, "Error: Category not detected", Toast.LENGTH_SHORT).show();
@@ -51,12 +48,8 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         longitude = prevIntent.getDoubleExtra("longitude", 0);
         //Toast.makeText(this, "Latitude: "+latitude+" Longitude: "+longitude, Toast.LENGTH_SHORT).show();
 
-        final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Quovis/";
-        ImageView myImage = (ImageView) findViewById(R.id.thePicture_summary);
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(dir+pic_location, options);
-        myImage.setImageBitmap(bitmap);
+        ImageView img = (ImageView) findViewById(R.id.thePicture_summary);
+        img.setImageBitmap(bmp);
     }
 
 
@@ -64,14 +57,21 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         placeTitle = (EditText) findViewById(R.id.place_title);
         placeDescription = (EditText) findViewById(R.id.place_description);
 
+        //save picture to internal storage and get the path
+        Calendar cal = Calendar.getInstance();
+        Date rightNow = cal.getTime();
+        String fileName = rightNow.toString().replaceAll("[:\\s]+", "");
+        fileName += ".jpg";
+        String pic_location = saveToInternalStorage(bmp, fileName);
+
         myDb = new DatabaseHelper(this);
+        String finalPath = pic_location+"/"+fileName;
         myDb.insertPlace(placeTitle.getText().toString(), placeDescription.getText().toString(),
-                category_id, latitude, longitude, pic_location);
+                category_id, latitude, longitude, finalPath);
 
         //after saving the new place jump to the main activity
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-
     }
 
     public void discardPlace(View view) {
@@ -81,6 +81,24 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
     public void saveNExit(View view) {
         savePlace(view);
         //after saving leave application
+    }
 
+    private String saveToInternalStorage(Bitmap bitmapImage, String file_name){
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory, file_name);
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return directory.getAbsolutePath();
     }
 }

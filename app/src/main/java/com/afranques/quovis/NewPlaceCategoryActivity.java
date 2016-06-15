@@ -40,7 +40,7 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         //to get the parameters sent from the previous intent
         Intent prevIntent = getIntent();
         //consider that maybe there's no picture
-        final String pic_location = (String) prevIntent.getStringExtra("the_picture");
+        final Bitmap bmp = (Bitmap) prevIntent.getParcelableExtra("the_picture");
 
         //we read all values from the table Categories and add them on a list
         myDb = new DatabaseHelper(this);
@@ -61,7 +61,7 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
                 //save category number and picture, and go to next screen (map location)
                 Intent intent = new Intent(NewPlaceCategoryActivity.this, SetLocationActivity.class);
-                intent.putExtra("the_picture", pic_location); //we pass the picture to the next activity
+                intent.putExtra("the_picture", bmp); //we pass the picture to the next activity
                 intent.putExtra("category_id", itemsID.get(position)); //we pass the category_id to next activity
                 //Toast.makeText(view.getContext(), Integer.toString(itemsID.get(position)), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
