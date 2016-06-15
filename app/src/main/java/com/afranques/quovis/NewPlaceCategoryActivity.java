@@ -36,19 +36,6 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         //getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        //this is to get the height of the task bar (if defined) in pixels
-        TypedValue tv = new TypedValue();
-        Integer actionBarHeight = 0;
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
-        }
-        //verticalMarginInPixels is the value from @dimen/activity_vertical_margin
-        int verticalMarginInPixels = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
-        int horizontalMarginInPixels = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
-        //so the padding of the content_main_id layout is the taskbar height + the vertical margin
-        LinearLayout ln = (LinearLayout) this.findViewById(R.id.layout_categories_list);
-        ln.setPadding(horizontalMarginInPixels,verticalMarginInPixels + actionBarHeight,horizontalMarginInPixels,verticalMarginInPixels);
-
         //to get the parameters sent from the previous intent
         Intent prevIntent = getIntent();
         //consider that maybe there's no picture

@@ -28,6 +28,8 @@
         android:text="Load location"
         android:textColor="@android:color/white"
         android:textSize="18sp"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
         custom:pb_colorComplete="@color/green_complete"
         custom:pb_colorNormal="@color/blue_normal"
         custom:pb_colorPressed="@color/blue_pressed"
