@@ -54,7 +54,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         //to get the parameters sent from the previous intent
         Intent prevIntent = getIntent();
         //consider that maybe there's no picture
-        final Bitmap bmp = (Bitmap) prevIntent.getParcelableExtra("the_picture");
+        final String pic_location = (String) prevIntent.getStringExtra("the_picture");
         final int category_id = prevIntent.getIntExtra("category_id", -1);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -79,7 +79,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
                 ActionProcessButton btn = (ActionProcessButton) view;
                 if(btn.getProgress() == 100){
                     Intent intent = new Intent(view.getContext(), NewPlaceSummaryActivity.class);
-                    intent.putExtra("the_picture", bmp);
+                    intent.putExtra("the_picture", pic_location);
                     intent.putExtra("category_id", category_id);
                     intent.putExtra("latitude", latitude);
                     intent.putExtra("longitude", longitude);

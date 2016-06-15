@@ -5,6 +5,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -25,13 +28,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private String pic_location;
+    private String dir;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -160,7 +170,28 @@ public class MainActivity extends AppCompatActivity {
 
     //this the function that defines how to invoke the camera
     private void takePicture() {
+        //save picture to internal storage and get the path
+        Calendar cal = Calendar.getInstance();
+        Date rightNow = cal.getTime();
+        String fileName = rightNow.toString().replaceAll("[:\\s]+", "");
+        fileName += ".jpg";
+
+        dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Quovis/";
+        File newdir = new File(dir);
+        newdir.mkdirs();
+        File newfile = new File(dir+fileName);
+        try {
+            newfile.createNewFile();
+        }
+        catch (IOException e)
+        {
+        }
+        Uri outputFileUri = Uri.fromFile(newfile);
+        pic_location = fileName;
+        //Toast.makeText(this, outputFileUri.toString(), Toast.LENGTH_LONG).show();
+
         Intent picIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        picIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
         startActivityForResult(picIntent, REQ_CODE_TAKE_PICTURE);
     }
 
@@ -171,12 +202,29 @@ public class MainActivity extends AppCompatActivity {
         //here we call the next activity, passing as a parameter the picture
         Intent intent = new Intent(this, NewPlaceCategoryActivity.class);
         if (requestCode == REQ_CODE_TAKE_PICTURE && resultCode == RESULT_OK) {
-            Bitmap bmp = (Bitmap) theIntent.getExtras().get("data");
+            //Bitmap bmp = (Bitmap) theIntent.getExtras().get("data");
             //ImageView img = (ImageView) findViewById(R.id.thePicture);
             //img.setImageBitmap(bmp);
+            //Toast.makeText(this, "Picture saved", Toast.LENGTH_SHORT).show();
 
             //MAYBE YOU SHOULD CONSIDER COMPRESSING THE IMAGE. CHECK STACKOVERFLOW QUESTION IN FAVS
-            intent.putExtra("the_picture", bmp);
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+//            Bitmap bitmap = BitmapFactory.decodeFile(dir+pic_location, options);
+//            File imageFile = new File(picturePath);
+//            try{
+//                OutputStream out = null;
+//                out = new FileOutputStream(imageFile);
+//                //Bitmap bitmap = BitmapFactory.decodeFile(picturePath);
+//
+//                bitmap.compress(Bitmap.CompressFormat.JPEG,80,out);
+//                out.flush();
+//                out.close();
+//            }catch(Exception e){
+//                Log.e("Dak","Erreur compress : "+e.toString());
+//            }
+
+            intent.putExtra("the_picture", pic_location);
         }
         startActivity(intent);
     }

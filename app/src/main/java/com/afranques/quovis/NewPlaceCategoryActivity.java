@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -39,7 +40,7 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         //to get the parameters sent from the previous intent
         Intent prevIntent = getIntent();
         //consider that maybe there's no picture
-        final Bitmap bmp = (Bitmap) prevIntent.getParcelableExtra("the_picture");
+        final String pic_location = (String) prevIntent.getStringExtra("the_picture");
 
         //we read all values from the table Categories and add them on a list
         myDb = new DatabaseHelper(this);
@@ -60,7 +61,7 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
                 //save category number and picture, and go to next screen (map location)
                 Intent intent = new Intent(NewPlaceCategoryActivity.this, SetLocationActivity.class);
-                intent.putExtra("the_picture", bmp); //we pass the picture to the next activity
+                intent.putExtra("the_picture", pic_location); //we pass the picture to the next activity
                 intent.putExtra("category_id", itemsID.get(position)); //we pass the category_id to next activity
                 //Toast.makeText(view.getContext(), Integer.toString(itemsID.get(position)), Toast.LENGTH_SHORT).show();
                 startActivity(intent);
@@ -130,6 +131,7 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         //code to add category
         AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
         final EditText edittext = new EditText(view.getContext());
+        edittext.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
         alert.setMessage("Enter new category name");
         alert.setTitle("New category");
 

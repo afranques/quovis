@@ -3,6 +3,7 @@ package com.afranques.quovis;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,9 +43,11 @@ public class MainListRowsAdapter extends ArrayAdapter<ArrayList<String>> {
         textView2.setText(listOfLists.get(position).get(1));
         textView3.setText("Urbana, US");
 
+        String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Quovis/";
         BitmapFactory.Options options = new BitmapFactory.Options();
+        //options.inSampleSize = 4;
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        Bitmap bitmap = BitmapFactory.decodeFile(listOfLists.get(position).get(2), options);
+        Bitmap bitmap = BitmapFactory.decodeFile(dir+listOfLists.get(position).get(2), options);
         imageView.setImageBitmap(bitmap);
 
         return rowView;
