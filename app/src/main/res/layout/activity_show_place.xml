@@ -1,68 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.afranques.quovis.ShowPlaceActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Name of the place"
-        android:id="@+id/show_place_title" />
+    <!--<com.wunderlist.slidinglayer.SlidingLayer-->
+        <!--android:id="@+id/slidingLayer1"-->
+        <!--android:layout_width="300dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:elevation="2dip" >-->
+    <!---->
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@color/primary_light">-->
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Additional notes or description"
-        android:id="@+id/show_place_description" />
+            <!--<ImageView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/show_thePicture"-->
+                <!--android:contentDescription="New place picture"-->
+                <!--android:layout_weight="1" />-->
+    <!---->
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Name of the place"-->
+                <!--android:id="@+id/show_place_title" />-->
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Category"
-        android:id="@+id/show_place_category" />
-
-    <!--<TextView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Lat and Long"-->
-        <!--android:id="@+id/show_place_latlong" />-->
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/show_thePicture"
-        android:contentDescription="New place picture"
-        android:layout_weight="1" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back"
-            android:onClick="goToMain"
-            android:layout_gravity="bottom|left"
-            android:layout_weight="1"
-            android:id="@+id/go_main_button" />
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Edit"
-            android:onClick="editPlace"
-            android:layout_gravity="bottom|right"
-            android:layout_weight="1"
-            android:id="@+id/edit_button" />
-    </LinearLayout>
-
-</LinearLayout>
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Category"-->
+                <!--android:id="@+id/show_place_category" />-->
+        <!---->
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Additional notes or description"-->
+                <!--android:id="@+id/show_place_description" />-->
+    <!---->
+        <!--</RelativeLayout>-->
+    <!--</com.wunderlist.slidinglayer.SlidingLayer>-->
+</RelativeLayout>

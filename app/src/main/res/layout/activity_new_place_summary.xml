@@ -14,19 +14,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Name of the place"
+        android:inputType="textCapSentences"
+        android:maxLines="1"
         android:id="@+id/place_title" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Additional notes or description"
-        android:id="@+id/place_description"
-        android:layout_weight="2" />
+        android:inputType="textCapSentences|textMultiLine"
+        android:maxLines="4"
+        android:gravity="top"
+        android:scrollHorizontally="false"
+        android:id="@+id/place_description" />
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/thePicture"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/thePicture_summary"
+        android:layout_gravity="bottom"
         android:contentDescription="New place picture"
         android:layout_weight="1" />
 

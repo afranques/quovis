@@ -1,8 +1,77 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.afranques.quovis.ShowPlaceInMapsActivity" />
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
+
+    <fragment
+        android:id="@+id/map_show_place"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.afranques.quovis.ShowPlaceInMapsActivity" />
+
+    <com.wunderlist.slidinglayer.SlidingLayer
+        xmlns:slidingLayer="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/slidingLayer1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        slidingLayer:shadowDrawable="@drawable/sidebar_shadow"
+        slidingLayer:shadowSize="5dp"
+        slidingLayer:offsetDistance="0dp"
+        slidingLayer:previewOffsetDistance="150dp"
+        slidingLayer:stickTo="top"
+        slidingLayer:changeStateOnTap="true" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingBottom="10dp"
+            android:background="@color/primary_light">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/show_thePicture"
+                android:contentDescription="New place picture"
+                android:paddingBottom="10dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true">
+            </ImageView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Name of the place"
+                android:paddingBottom="10dp"
+                android:id="@+id/show_place_title" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Category"
+                android:paddingBottom="10dp"
+                android:id="@+id/show_place_category" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Additional notes or description"
+                android:id="@+id/show_place_description" />
+
+        </LinearLayout>
+    </com.wunderlist.slidinglayer.SlidingLayer>
+
+</RelativeLayout>

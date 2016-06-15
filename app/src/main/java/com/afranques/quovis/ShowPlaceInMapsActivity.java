@@ -6,9 +6,12 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.text.Html;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +24,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.squareup.picasso.Picasso;
+import com.wunderlist.slidinglayer.SlidingLayer;
+
+import java.io.File;
 
 public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
 
@@ -28,6 +35,10 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
     private GoogleMap mMap;
     DatabaseHelper myDb;
     private int place_id;
+    private String title_place;
+    private String description_place;
+    private String category_place;
+    private String pic_location_place;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +51,7 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
         //Toast.makeText(this, Integer.toString(place_id), Toast.LENGTH_SHORT).show();
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.map_show_place);
         mapFragment.getMapAsync(this);
     }
 
@@ -70,15 +81,14 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
             //Toast.makeText(this, res.getString(0)+" "+res.getString(4)+" "+res.getString(5), Toast.LENGTH_LONG).show();
             //String snippetString = "Category: "+res.getString(3)+"\nDescription: "+res.getString(2);
 
-            String pic_location = res.getString(6);
+            pic_location_place = res.getString(6);
             //Toast.makeText(this, pic_location, Toast.LENGTH_SHORT).show();
-
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap = BitmapFactory.decodeFile(pic_location, options);
 
             Cursor catRes = myDb.getCatName(res.getInt(3));
             catRes.moveToNext();
+            title_place = res.getString(1);
+            description_place = res.getString(2);
+            category_place = catRes.getString(0);
             if (mMap != null) {
                 mMap.addMarker(new MarkerOptions()
                         .position(placeLocation)
@@ -106,10 +116,30 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
 
     @Override
     public void onInfoWindowClick(Marker marker) {
+
+        TextView placeTitle = (TextView) findViewById(R.id.show_place_title);
+        placeTitle.setText(title_place);
+
+        TextView placeDescription = (TextView) findViewById(R.id.show_place_description);
+        placeDescription.setText(Html.fromHtml("<b>Note: </b>"+description_place));
+
+        TextView placeCategory = (TextView) findViewById(R.id.show_place_category);
+        placeCategory.setText(Html.fromHtml("<b>Category: </b>"+category_place));
+
+        final String dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/Quovis/";
+        ImageView myImage = (ImageView) findViewById(R.id.show_thePicture);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = BitmapFactory.decodeFile(dir+pic_location_place, options);
+        myImage.setImageBitmap(bitmap);
+
         //Toast.makeText(this, "Info window clicked",Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, ShowPlaceActivity.class);
-        intent.putExtra("place_id", place_id);
-        startActivity(intent);
+        SlidingLayer slidingLayer = (SlidingLayer) findViewById(R.id.slidingLayer1);
+        slidingLayer.openPreview(true);
+
+//        Intent intent = new Intent(this, ShowPlaceActivity.class);
+//        intent.putExtra("place_id", place_id);
+//        startActivity(intent);
     }
 
     @Override
