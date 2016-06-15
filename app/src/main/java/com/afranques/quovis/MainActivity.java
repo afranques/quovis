@@ -7,7 +7,12 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -32,11 +37,12 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper myDb;
-    List<String> items = new ArrayList<String>();
-    List<Integer> itemsID = new ArrayList<Integer>();
     List<String> catItems = new ArrayList<String>();
     List<Integer> catItemsID = new ArrayList<Integer>();
     private static final int REQ_CODE_TAKE_PICTURE = 1;
+    private Toolbar toolbar;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -70,51 +76,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
+        toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Array of choices for the spinner
-        //we read all values from the table Categories and add them on a list
-        myDb = new DatabaseHelper(this);
-        Cursor res = myDb.getAllData();
-        catItemsID.add(0);
-        catItems.add("All categories");
-        while (res.moveToNext()) {
-            catItemsID.add(res.getInt(0)); //to get the category_id
-            catItems.add(res.getString(1)); //to get the category_name
-        }
-        // Selection of the spinner
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_nav);
-        // Application of the Array to the Spinner
-        ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(this,   android.R.layout.simple_spinner_item, catItems);
-        spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); // The drop down view
-        spinner.setAdapter(spinnerArrayAdapter);
-        // Every time a choice is selected (including when the activity starts)
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parentView, View view, int position, long myID) {
-                //Toast.makeText(view.getContext(), Integer.toString(catItemsID.get(position)), Toast.LENGTH_SHORT).show();
-                showPlacesCategory(view, position);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
-                // your code here
-            }
-        });
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
 
-        //this is to get the height of the task bar (if defined) in pixels
-        TypedValue tv = new TypedValue();
-        Integer actionBarHeight = 0;
-        if (getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
-        }
-        //verticalMarginInPixels is the value from @dimen/activity_vertical_margin
-        int verticalMarginInPixels = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
-        int horizontalMarginInPixels = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
-        //so the padding of the content_main_id layout is the taskbar height + the vertical margin
-        LinearLayout ln = (LinearLayout) this.findViewById(R.id.content_main_id);
-        ln.setPadding(horizontalMarginInPixels,verticalMarginInPixels + actionBarHeight,horizontalMarginInPixels,verticalMarginInPixels);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
 
         FloatingActionButton fab_add_button = (FloatingActionButton) findViewById(R.id.fab_add_button_main);
         fab_add_button.setOnClickListener(new View.OnClickListener() {
@@ -132,62 +103,55 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void showPlacesCategory (View view, int position) {
-        items = new ArrayList<String>();
-        itemsID = new ArrayList<Integer>();
-        Cursor res = myDb.getPlacesByCat(position);
+    // BEGINNING TAB FUNCTIONS
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        // Array of choices for the spinner
+        //we read all values from the table Categories and add them on a list
+        myDb = new DatabaseHelper(this);
+        Cursor res = myDb.getAllData();
+        catItemsID.add(0);
+        catItems.add("All");
+        adapter.addFragment(new MainContentTabs(0), "All");
         while (res.moveToNext()) {
-            itemsID.add(res.getInt(0)); //to get the place_id
-            items.add(res.getString(1));
+            catItemsID.add(res.getInt(0)); //to get the category_id
+            catItems.add(res.getString(1)); //to get the category_name
+            adapter.addFragment(new MainContentTabs(res.getInt(0)), res.getString(1));
         }
 
-        //we set the list to its place
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
-        ListView listView = (ListView) findViewById(R.id.list_places_id);
-        listView.setAdapter(adapter);
-
-        //when we click to an element of the list
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(view.getContext(), ShowPlaceInMapsActivity.class);
-                intent.putExtra("place_id", itemsID.get(position));
-                startActivity(intent);
-                //Toast.makeText(view.getContext(), Integer.toString(position), Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, final View view, final int pos, long id) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
-                alert.setTitle("Delete place");
-                alert.setMessage("Place name: "+items.get(pos));
-                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        //Toast.makeText(view.getContext(), "cat " + itemsID.get(pos)+" deleted", Toast.LENGTH_SHORT).show();
-
-                        //we delete that place_id (entry) from Places
-                        myDb.deletePlace(itemsID.get(pos));
-
-                        //we reload the activity in order to load the new category
-                        Intent intent = getIntent();
-                        finish();
-                        startActivity(intent);
-                    }
-                });
-                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        // what ever you want to do with No option.
-                        dialog.cancel();
-                    }
-                });
-                alert.show();
-
-                return true;
-            }
-        });
+        viewPager.setAdapter(adapter);
     }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(FragmentManager manager) {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+    }
+    // END TAB FUNCTIONS
 
     public void startNewPlace() {
         //this function invokes the camera

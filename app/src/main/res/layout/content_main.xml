@@ -4,14 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/content_main_id"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="?android:attr/actionBarSize"
-    tools:context="com.afranques.quovis.MainActivity"
-    tools:showIn="@layout/activity_main">
+    android:id="@+id/content_main_id"
+    tools:context="com.afranques.quovis.MainActivity" >
 
     <!--<Button-->
     <!--android:layout_width="wrap_content"-->
