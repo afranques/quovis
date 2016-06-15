@@ -21,7 +21,6 @@
         android:layout_width="match_parent"
         android:longClickable="true"
         android:layout_height="wrap_content"
-        android:paddingBottom="56dp"
         android:layout_weight="1" />
 
     <!--<Button-->
