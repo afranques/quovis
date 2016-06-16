@@ -9,8 +9,12 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -36,6 +40,15 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_place_summary);
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.new_place_summary_toolbar);
+        setSupportActionBar(myToolbar);
+
+        EditText editText = (EditText) findViewById(R.id.place_title);
+        //it's focus by default, but just in case we specify that we want to focus on the title, not description
+        editText.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
         //to get the parameters sent from the previous intent
         Intent prevIntent = getIntent();
         //consider that maybe there's no picture
@@ -52,8 +65,32 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         img.setImageBitmap(bmp);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.topcorner_menu_summary, menu);
+        return true;
+    }
 
-    public void savePlace(View view) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_save_summary:
+                savePlace();
+                return true;
+
+            case R.id.action_discard_summary:
+                discardPlace();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    public void savePlace() {
         placeTitle = (EditText) findViewById(R.id.place_title);
         placeDescription = (EditText) findViewById(R.id.place_description);
 
@@ -69,18 +106,32 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         myDb.insertPlace(placeTitle.getText().toString(), placeDescription.getText().toString(),
                 category_id, latitude, longitude, finalPath);
 
+
         //after saving the new place jump to the main activity
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    public void discardPlace(View view) {
-        //exit application
+    public void discardPlace() {
+        //discard place
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
-    public void saveNExit(View view) {
-        savePlace(view);
-        //after saving leave application
+    @Override
+    public void onPause() {
+        super.onPause();
+        //hide keyboard because we forced it on previously and it still might me on
+        InputMethodManager imm = (InputMethodManager) getSystemService(NewPlaceSummaryActivity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //hide keyboard because we forced it on previously and it still might me on
+        InputMethodManager imm = (InputMethodManager) getSystemService(NewPlaceSummaryActivity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getWindow().getDecorView().getRootView().getWindowToken(), 0);
     }
 
     private String saveToInternalStorage(Bitmap bitmapImage, String file_name){

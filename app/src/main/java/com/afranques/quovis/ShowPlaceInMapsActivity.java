@@ -10,7 +10,12 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,7 +33,7 @@ import com.wunderlist.slidinglayer.SlidingLayer;
 
 import java.io.File;
 
-public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
+public class ShowPlaceInMapsActivity extends AppCompatActivity implements GoogleMap.OnInfoWindowClickListener, OnMapReadyCallback {
 
     private static final int REQUEST_LOCATION_PERMISSION_CODE = 2;
     private GoogleMap mMap;
@@ -38,11 +43,19 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
     private String description_place;
     private String category_place;
     private String pic_location_place;
+    private LatLng placeLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_place_in_maps);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.show_place_maps_toolbar);
+        setSupportActionBar(myToolbar);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true); //show the return icon on action bar
+        }
 
         //to get the parameters sent from the previous intent
         Intent prevIntent = getIntent();
@@ -52,6 +65,40 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_show_place);
         mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.topcorner_menu_show_place_in_maps, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_delete_show_maps:
+                myDb.deletePlace(place_id);
+                //after deleting the place jump to the main activity
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                return true;
+
+            case R.id.action_locate_show_maps:
+                if (mMap != null) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 16));
+                } else {
+                    Toast.makeText(this, "Error: couldn't center marker", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+
+            case R.id.action_edit_show_maps:
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 
@@ -69,7 +116,6 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
         mMap = googleMap;
         enableMyLocation();
 
-        LatLng placeLocation;
         myDb = new DatabaseHelper(this);
         Cursor res = myDb.getPlace(place_id);
         if (res.getCount() != 0) {
@@ -87,13 +133,19 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
             catRes.moveToNext();
             title_place = res.getString(1);
             description_place = res.getString(2);
+            String description_place_hint;
+            if (description_place.length() > 45) {
+                description_place_hint = description_place.substring(0,44)+"...";
+            } else {
+                description_place_hint = description_place;
+            }
             category_place = catRes.getString(0);
             if (mMap != null) {
                 mMap.addMarker(new MarkerOptions()
                         .position(placeLocation)
                         .title(res.getString(1))
                         //.icon(BitmapDescriptorFactory.fromBitmap(bitmap))
-                        .snippet(catRes.getString(0) + " - " + res.getString(2))).showInfoWindow();
+                        .snippet(description_place_hint)).showInfoWindow();
                 mMap.setOnInfoWindowClickListener(this);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(placeLocation, 16));
             } else {
@@ -109,7 +161,7 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
         } else if (mMap != null) {
             // If we already have access, prepare maps
             mMap.setMyLocationEnabled(true);
-            //mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            mMap.getUiSettings().setMyLocationButtonEnabled(false);
         }
     }
 
@@ -134,10 +186,6 @@ public class ShowPlaceInMapsActivity extends FragmentActivity implements GoogleM
         //Toast.makeText(this, "Info window clicked",Toast.LENGTH_SHORT).show();
         SlidingLayer slidingLayer = (SlidingLayer) findViewById(R.id.slidingLayer1);
         slidingLayer.openPreview(true);
-
-//        Intent intent = new Intent(this, ShowPlaceActivity.class);
-//        intent.putExtra("place_id", place_id);
-//        startActivity(intent);
     }
 
     @Override

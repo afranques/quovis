@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:custom="http://schemas.android.com/apk/res-auto">
+    android:fitsSystemWindows="true" >
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/show_place_maps_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
     <fragment
         android:id="@+id/map_show_place"
@@ -18,9 +34,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         slidingLayer:shadowDrawable="@drawable/sidebar_shadow"
-        slidingLayer:shadowSize="5dp"
+        slidingLayer:shadowSize="8dp"
         slidingLayer:offsetDistance="0dp"
-        slidingLayer:previewOffsetDistance="150dp"
+        slidingLayer:previewOffsetDistance="200dp"
         slidingLayer:stickTo="top"
         slidingLayer:changeStateOnTap="true" >
 
@@ -28,7 +44,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="@dimen/activity_vertical_margin"
+            android:layout_marginTop="?attr/actionBarSize"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingBottom="10dp"
@@ -39,6 +55,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/show_thePicture"
                 android:contentDescription="New place picture"
+                android:paddingTop="15dp"
                 android:paddingBottom="10dp"
                 android:layout_weight="1" />
 
@@ -61,6 +78,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Category"
                 android:paddingBottom="10dp"
                 android:id="@+id/show_place_category" />
@@ -68,10 +86,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Additional notes or description"
                 android:id="@+id/show_place_description" />
 
         </LinearLayout>
     </com.wunderlist.slidinglayer.SlidingLayer>
-
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

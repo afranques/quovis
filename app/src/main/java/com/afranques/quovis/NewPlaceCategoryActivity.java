@@ -1,6 +1,8 @@
 package com.afranques.quovis;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,7 +14,12 @@ import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -27,6 +34,7 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
     DatabaseHelper myDb;
     List<String> items = new ArrayList<String>();
     List<Integer> itemsID = new ArrayList<Integer>();
+    private EditText lastEditTextFocused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +106,27 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.topcorner_menu_select_category, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_discard_in_select_category:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     public void deleteCategory(View view, final int pos) {
         AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
         alert.setTitle("Delete category");
@@ -132,6 +161,7 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
         AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
         final EditText edittext = new EditText(view.getContext());
         edittext.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        lastEditTextFocused = edittext; //we save this so that we know from where to close the keyboard
         alert.setMessage("Enter new category name");
         alert.setTitle("New category");
 
@@ -146,6 +176,9 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
                 //we insert the new category into de DB
                 myDb.insertData(newCategoryName);
 
+                //hide keyboard because we forced it on previously and it still might me on
+                InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(edittext.getWindowToken(), 0);
                 //we reload the activity in order to load the new category
                 Intent intent = getIntent();
                 finish();
@@ -155,18 +188,52 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+                //hide keyboard because we forced it on previously and it still might me on
+                InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(edittext.getWindowToken(), 0);
                 // what ever you want to do with No option.
                 dialog.cancel();
             }
         });
 
         alert.show();
+        edittext.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
     }
 
-    public void renameCategory(View view, final int pos) {
+    @Override
+    public void onPause() {
+        super.onPause();
+        // hide keyboard because we forced it on previously and it still might me on
+        // if lastEditTextFocused is null is because the keyboard has never been invoked, therefore
+        // there's no need to close it
+        if (lastEditTextFocused != null) {
+            InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            im.hideSoftInputFromWindow(lastEditTextFocused.getWindowToken(), 0);
+        }
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        //hide keyboard because we forced it on previously and it still might me on
+        // if lastEditTextFocused is null is because the keyboard has never been invoked, therefore
+        // there's no need to close it
+        if (lastEditTextFocused != null) {
+            InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            im.hideSoftInputFromWindow(lastEditTextFocused.getWindowToken(), 0);
+        }
+    }
+
+    public void renameCategory(final View view, final int pos) {
         //code to add category
         AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
         final EditText edittext = new EditText(view.getContext());
+        edittext.setInputType(InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+        lastEditTextFocused = edittext; //we save this so that we know from where to close the keyboard
         edittext.setText(items.get(pos));
         alert.setTitle("Rename category");
         //alert.setMessage("Modify the category name");
@@ -182,6 +249,9 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
                 //we insert the new category into de DB
                 myDb.updateCategory(itemsID.get(pos), newCategoryName);
 
+                //hide keyboard because we forced it on previously and it still might me on
+                InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(edittext.getWindowToken(), 0);
                 //we reload the activity in order to load the new category
                 Intent intent = getIntent();
                 finish();
@@ -191,11 +261,16 @@ public class NewPlaceCategoryActivity extends AppCompatActivity {
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+                InputMethodManager im = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(edittext.getWindowToken(), 0);
                 // what ever you want to do with No option.
                 dialog.cancel();
             }
         });
 
         alert.show();
+        edittext.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
     }
 }

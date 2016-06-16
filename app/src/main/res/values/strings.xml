@@ -3,6 +3,7 @@
     <string name="newPlaceButtonMain">New place</string>
     <string name="title_activity_set_location">Set location</string>
     <string name="newCategoryButton">Add category</string>
-    <string name="title_activity_show_place_in_maps">Show place in map</string>
+    <string name="title_activity_show_place_in_maps">Place in map</string>
     <string name="deleteDatabase">Delete all stored data</string>
+    <string name="title_activity_new_place_category">Select a category</string>
 </resources>
