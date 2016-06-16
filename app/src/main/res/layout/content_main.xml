@@ -20,6 +20,7 @@
         android:id="@+id/list_places_id"
         android:layout_width="match_parent"
         android:longClickable="true"
+        android:paddingBottom="56dp"
         android:layout_height="wrap_content"
         android:layout_weight="1" />
 

@@ -53,33 +53,6 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager viewPager;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.topcorner_menu, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.delete_database_id:
-                // User chose the "Erase all data" item, delete all database...
-                deleteMyDatabase(findViewById(android.R.id.content));
-                return true;
-
-            case R.id.add_place_id:
-                // User chose the "Add new place"
-                startNewPlace();
-                return true;
-//
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -109,6 +82,32 @@ public class MainActivity extends AppCompatActivity {
         // was leaked! Please fix your application to end transactions in progress properly and to
         // close the database when it is no longer needed.
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.topcorner_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.delete_database_id:
+                // User chose the "Erase all data" item, delete all database...
+                deleteMyDatabase(findViewById(android.R.id.content));
+                return true;
+
+            case R.id.add_place_id:
+                // User chose the "Add new place"
+                startNewPlace();
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     // BEGINNING TAB FUNCTIONS

@@ -116,7 +116,7 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         //if (mLocation == null) {
         startLocationUpdates();
-        Toast.makeText(this, "Started location updates", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "Started location updates", Toast.LENGTH_SHORT).show();
 
         //we put the loading button into loading position (so that it can't be clicked)
         ActionProcessButton btnProcess = (ActionProcessButton) findViewById(R.id.btnProcess);
@@ -125,14 +125,14 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
         if (mLocation != null) {
             latitude = mLocation.getLatitude();
             longitude = mLocation.getLongitude();
-            Toast.makeText(this, "Got initial coordinates", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Got initial coordinates", Toast.LENGTH_SHORT).show();
             CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
             mMap.moveCamera(center);
             mMap.animateCamera(zoom);
         }
         else {
-            Toast.makeText(this, "Location not detected", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Location not detected", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -200,10 +200,10 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
 
     @Override
     public void onLocationChanged(Location location) {
-        if (location.getAccuracy() < 20 && distanceTwoLocations(mLocation, location) < 20) {
+        if (location.getAccuracy() < 20 || distanceTwoLocations(mLocation, location) < 20) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            Toast.makeText(this, "New location", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "New location", Toast.LENGTH_SHORT).show();
             CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
             mMap.moveCamera(center);
@@ -252,14 +252,14 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
                         // contacts-related task you need to do.
                         enableMyLocation();
                     } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                        Toast.makeText(this, "We need location to get your place", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "We need location to get your place", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(this, MainActivity.class);
                         startActivity(intent);
                         // Show an expanation to the user *asynchronously* -- don't block
                         // this thread waiting for the user's response! After the user
                         // sees the explanation, try again to request the permission.
                     } else {
-                        Toast.makeText(this, "The app is not gonna work without location permitions, so go to settings and allow it", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "The app is not gonna work without location permitions, so go to settings and allow it", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(this, MainActivity.class);
                         startActivity(intent);
                     }
