@@ -18,7 +18,8 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".MainActivity">
+            android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,7 +46,9 @@
             android:name=".SetLocationActivity"
             android:label="@string/title_activity_set_location" />
 
-        <activity android:name=".NewPlaceSummaryActivity" />
+        <activity
+            android:name=".NewPlaceSummaryActivity"
+            android:label="@string/title_activity_summary" />
 
         <activity
             android:name=".ShowPlaceInMapsActivity"
