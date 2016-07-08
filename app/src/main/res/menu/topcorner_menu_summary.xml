@@ -5,7 +5,7 @@
     <!-- "Delete", should appear as action button if possible -->
     <item
         android:id="@+id/action_discard_summary"
-        android:icon="@drawable/ic_delete_white_24dp"
+        android:icon="@drawable/ic_clear_white_24dp"
         android:title="Discard"
         app:showAsAction="ifRoom"/>
 
