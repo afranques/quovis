@@ -20,3 +20,5 @@ Quovis is an Android application for quickly saving, organizing and retrieving y
 - [ ] save locations online
 - [ ] save pictures online
 - [ ] comment all the code and check private/public/static/final proper use
+
+## Screenshots:
