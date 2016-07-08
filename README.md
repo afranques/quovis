@@ -1,7 +1,7 @@
 # Quovis
 Quovis is an Android application for quickly saving, organizing and retrieving your favorite locations.
 
-## To-Do list:
+## To-Do list
 - [x] skip button in take picture step
 - [x] button add categories gets hidden
 - [x] work with the margins so that the shadows at the top/bottom don't look cut
@@ -21,4 +21,4 @@ Quovis is an Android application for quickly saving, organizing and retrieving y
 - [ ] save pictures online
 - [ ] comment all the code and check private/public/static/final proper use
 
-## Screenshots:
+## Screenshots
