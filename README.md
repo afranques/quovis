@@ -3,7 +3,7 @@ Quovis is an Android application for quickly saving, organizing and retrieving y
 
 ## To-Do list
 
-_Moved to [issues](https://github.com/afranques44/quovis/issues/1)._
+_Check the [corresponding entry in the issues section](https://github.com/afranques44/quovis/issues/1)._
 
 ## Screenshots
 
