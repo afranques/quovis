@@ -23,10 +23,10 @@ Quovis is an Android application for quickly saving, organizing and retrieving y
 
 ## Screenshots
 
-- Checking location
+### Checking location
 
 ![Checking location steps](/screenshots/loading_loc.png "Checking location steps")
 
-- Saving a new location
+### Saving a new location
 
 ![Saving location steps](/screenshots/saving_loc.png "Saving location steps")
