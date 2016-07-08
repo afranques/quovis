@@ -29,4 +29,6 @@ Quovis is an Android application for quickly saving, organizing and retrieving y
 
 ### Saving a new location
 
+_Although in these screenshots it's not shown, there's an intermediate screen (before choosing the place category) where the user can take the pictures that will be attached to the place description._
+
 ![Saving location steps](/screenshots/saving_loc.png "Saving location steps")
