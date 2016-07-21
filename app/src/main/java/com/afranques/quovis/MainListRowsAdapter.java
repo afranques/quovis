@@ -41,7 +41,7 @@ public class MainListRowsAdapter extends ArrayAdapter<ArrayList<String>> {
         ImageView imageView = (ImageView) rowView.findViewById(R.id.thumbnail_row);
         textView.setText(listOfLists.get(position).get(0));
         textView2.setText(listOfLists.get(position).get(1));
-        textView3.setText("Urbana, US");
+        textView3.setText(listOfLists.get(position).get(4)+", "+listOfLists.get(position).get(3));  //jaume
 
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inPreferredConfig = Bitmap.Config.ARGB_8888;

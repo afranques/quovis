@@ -31,7 +31,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "category_id INTEGER," +
                 "latitude TEXT," +
                 "longitude TEXT," +
-                "pic_location TEXT )");
+                "pic_location TEXT," + //Jaume
+                "country TEXT," + //Jaume
+                "city TEXT )");
     }
 
     @Override
@@ -69,7 +71,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.delete("Places", "place_id = "+place_id, null);
     }
 
-    public boolean insertPlace(String place_title, String place_description, int category_id,
+    public boolean insertPlace(String place_title, String place_description, String country, String city, int category_id,
                                double latitude, double longitude, String pic_location) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -78,6 +80,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("category_id", category_id);
         contentValues.put("latitude", Double.toString(latitude));
         contentValues.put("longitude", Double.toString(longitude));
+        contentValues.put("country", country);  //jaume
+        contentValues.put("city", city);        //jaume
         contentValues.put("pic_location", pic_location);
         long result = db.insert("Places", null, contentValues);
         if(result == -1)

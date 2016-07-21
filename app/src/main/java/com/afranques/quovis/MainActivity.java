@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 startNewPlace();
             }
         });
-
         // TODO I never close the database, and I should do that because otherwise i get this:
         // A SQLiteConnection object for database '/data/data/com.afranques.quovis/databases/QuovisDB.db'
         // was leaked! Please fix your application to end transactions in progress properly and to
