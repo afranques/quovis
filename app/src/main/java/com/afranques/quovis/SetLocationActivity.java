@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.provider.SyncStateContract;
@@ -31,6 +33,9 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+import java.util.Locale;
+
 public class SetLocationActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private static final int REQUEST_LOCATION_PERMISSION_CODE = 2;
@@ -45,6 +50,8 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
 
     private double latitude = 0;
     private double longitude = 0;
+    private String city = "";       //jaume
+    private String country = "";    //jaume
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +84,29 @@ public class SetLocationActivity extends FragmentActivity implements OnMapReadyC
             @Override
             public void onClick(View view) {
                 ActionProcessButton btn = (ActionProcessButton) view;
+
                 if(btn.getProgress() == 100){
+                    //jaume
+                    //When we have good location we get city and country from latitude and longitude
+                    Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                    List<Address> addresses = null;
+                    try {
+                        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                        //Some locations store the city in Sub-Admin field instead of Locality.
+                        city = (addresses.get(0).getSubAdminArea() != null)? addresses.get(0).getSubAdminArea() : addresses.get(0).getLocality();
+                        country = addresses.get(0).getCountryCode();
+                    } catch (Exception e) {
+                        Log.d("ERROR","Something went wrong getting location");
+                        e.printStackTrace();
+                    }
+                    //endjaume
                     Intent intent = new Intent(view.getContext(), NewPlaceSummaryActivity.class);
                     intent.putExtra("the_picture", bmp);
                     intent.putExtra("category_id", category_id);
                     intent.putExtra("latitude", latitude);
                     intent.putExtra("longitude", longitude);
+                    intent.putExtra("city", city);  //jaume
+                    intent.putExtra("country", country);    //jaume
                     startActivity(intent);
                 }
             }

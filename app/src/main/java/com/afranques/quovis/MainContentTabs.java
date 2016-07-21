@@ -30,11 +30,15 @@ import java.util.List;
 public class MainContentTabs extends Fragment {
 
     DatabaseHelper myDb;
-    List<String> items = new ArrayList<String>(); //we store the titles
-    List<String> itemsDes = new ArrayList<String>(); //we store the descriptions
-    List<String> itemsPicLoc = new ArrayList<String>(); //we store the pic locations
-    List<Integer> itemsID = new ArrayList<Integer>();
+    List<String> items = new ArrayList<>(); //we store the titles
+    List<String> itemsDes = new ArrayList<>(); //we store the descriptions
+    List<String> itemsPicLoc = new ArrayList<>(); //we store the pic locations
+    List<String> itemsCountry = new ArrayList<>(); //we store the country //jaume
+    List<String> itemsCity = new ArrayList<>(); //we store the country    //jaume
+    List<Integer> itemsID = new ArrayList<>();
     private int category_id;
+
+    public MainContentTabs(){}
 
     public MainContentTabs(int category_id) {
         // Required empty public constructor
@@ -57,8 +61,8 @@ public class MainContentTabs extends Fragment {
     }
 
     private void showPlacesCategory (View view, int position) {
-        items = new ArrayList<String>();
-        itemsID = new ArrayList<Integer>();
+        //items = new ArrayList<String>(); //commented  by jaume. We don't need to initialize it twice
+        //itemsID = new ArrayList<Integer>(); // " "
         myDb = new DatabaseHelper(this.getContext());
         Cursor res = myDb.getPlacesByCat(position);
         ArrayList<ArrayList<String>> listOfLists = new ArrayList<ArrayList<String>>();
@@ -72,6 +76,16 @@ public class MainContentTabs extends Fragment {
             rowInfo.add(res.getString(2));
             itemsPicLoc.add(res.getString(6)); //to get the place_pic_location
             rowInfo.add(res.getString(6));
+            //jaume
+            if(res.getString(7)!=null){
+                itemsCountry.add(res.getString(7)); //to get the place country
+                rowInfo.add(res.getString(7));
+            }
+            if(res.getString(8)!=null){
+                itemsCity.add(res.getString(8)); //to get the place city
+                rowInfo.add(res.getString(8));
+            }
+            //jaume
             listOfLists.add(rowInfo);
         }
 

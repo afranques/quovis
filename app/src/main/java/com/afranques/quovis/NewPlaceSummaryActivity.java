@@ -34,6 +34,8 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
     private int category_id;
     private double latitude;
     private double longitude;
+    private String city;
+    private String country;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,8 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
         }
         latitude = prevIntent.getDoubleExtra("latitude", 0);
         longitude = prevIntent.getDoubleExtra("longitude", 0);
+        country = prevIntent.getStringExtra("country");
+        city = prevIntent.getStringExtra("city");
         //Toast.makeText(this, "Latitude: "+latitude+" Longitude: "+longitude, Toast.LENGTH_SHORT).show();
 
         ImageView img = (ImageView) findViewById(R.id.thePicture_summary);
@@ -103,7 +107,8 @@ public class NewPlaceSummaryActivity extends AppCompatActivity {
 
         myDb = new DatabaseHelper(this);
         String finalPath = pic_location+"/"+fileName;
-        myDb.insertPlace(placeTitle.getText().toString(), placeDescription.getText().toString(),
+        //jaume
+        myDb.insertPlace(placeTitle.getText().toString(), placeDescription.getText().toString(), country, city,
                 category_id, latitude, longitude, finalPath);
 
 
